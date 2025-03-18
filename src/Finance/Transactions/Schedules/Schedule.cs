@@ -1,6 +1,5 @@
 using System.Collections;
 using Finance.Library;
-using Finance.Transactions;
 
 namespace Finance.Transactions.Schedules;
 
@@ -17,10 +16,13 @@ public class Schedule : ISchedule
     private TimeInterval _interval { get; init; }
     private DateTime _endDate { get; init; }
 
-    private ITransaction _currentTransaction {
+    private ITransaction CurrentTransaction
+    {
         get => _currentTransaction ??= _baseTransaction;
         set => _currentTransaction = value;
     }
+
+    private ITransaction? _currentTransaction;
 
     private Schedule(string name, ITransaction transaction, TimeInterval interval, DateTime endDate)
     {
@@ -45,10 +47,10 @@ public class Schedule : ISchedule
     #region IEnumerable
     public IEnumerator<ITransaction> GetEnumerator()
     {    
-        while (_currentTransaction != null && _currentTransaction.Date <= _endDate)
+        while (CurrentTransaction != null && CurrentTransaction.Date <= _endDate)
         {
-            yield return _currentTransaction;
-            _currentTransaction = GetNext(_currentTransaction, _interval);
+            yield return CurrentTransaction;
+            CurrentTransaction = GetNext(CurrentTransaction, _interval);
         }
 
         yield break;    
@@ -77,6 +79,7 @@ public class Schedule : ISchedule
         {
             if (name is null)
                 throw new ArgumentNullException(nameof(name));
+
             _name = name;
             return this;
         }

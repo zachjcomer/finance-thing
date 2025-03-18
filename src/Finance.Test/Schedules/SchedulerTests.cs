@@ -1,6 +1,7 @@
-using Finance.Schedules;
+using Finance.Transactions.Schedules;
 using Finance.Transactions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Finance.Library;
 
 namespace Finance.Test.Schedules;
 
