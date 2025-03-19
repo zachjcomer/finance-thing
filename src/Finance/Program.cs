@@ -10,31 +10,16 @@ class Program
 {
     static void Main(string[] args)
     {
-        ITransaction dailyDollar = new Income("Dollar", 1, new(2025, 1, 1));
-        var dailyDollarSchedule = new Schedule.Builder(dailyDollar).WithInterval(TimeInterval.Day).WithEndDate(new(2025, 1, 31)).Build();
+        ITransaction bhSalary1 = new Income("BH Salary", 1000, new(2023, 3, 5));
+        ITransaction bhSalary2 = new Income("BH Salary", 1000, new(2023, 3, 20));
 
-        ITransaction salary = new Income("Salary", 5000, new(2025, 1, 1));
-        var salarySchedule = new Schedule.Builder(salary).WithInterval(TimeInterval.Month).WithEndDate(new(2025, 12, 31)).Build();
+        var bhSalarySchedule1 = new Schedule.Builder(bhSalary1).Monthly().WithEndDate(new(2025, 3, 21)).Build();
+        var bhSalarySchedule2 = new Schedule.Builder(bhSalary2).Monthly().WithEndDate(new(2025, 3, 21)).Build();
 
-        ITransaction groceries = new Expense("Groceries", 100, new(2025, 1, 1));
-        var groceriesSchedule = new Schedule.Builder(groceries).WithInterval(TimeInterval.Month).WithEndDate(new(2025, 12, 31)).Build();
+        var salaryTotal = MeasureHelper.Bin(TimeInterval.Month, bhSalarySchedule1, bhSalarySchedule2).Accumulate(x => x.Sum(y => y.Amount), (x, y) => x + y, 0m).ToList();
 
-        var dollarTotal = dailyDollarSchedule.Accumulate(x => x.Amount, (x, y) => x + y, 0m).ToList();
-        var dollarRollingAverage = dollarTotal.SlidingWindow(x => x.Average(y => y), 2).ToList();
+        Console.WriteLine(string.Join(", ", salaryTotal));
 
-        var allTransactions = MeasureHelper.Bin(TimeInterval.Month, salarySchedule, groceriesSchedule);
-
-        // ITransaction[] transactions = {
-        //     new Expense("Groceries", 100, new(2023, 1, 1)),
-        //     new Income("Salary", 5000, new(2023, 1, 1)),
-        // };
-
-        // ISchedule[] schedulers = {
-        //     new Schedule.Builder(transactions[0]).WithInterval(TimeInterval.Month).WithEndDate(new(2024, 12, 31)).Build(),
-        //     new Schedule.Builder(transactions[1]).WithInterval(TimeInterval.Month).WithEndDate(new(2024, 12, 31)).Build(),
-        // };
-
-        // var allTransactions = schedulers.SelectMany(x => x.ToList()).GroupBy(x => x.Date.Truncate(TimeInterval.Month));
-        // var netIncome = allTransactions.Accumulate(x => x.Sum(y => y.Amount), (x, y) => x + y, 0m);
-    }
+        // var dollarRollingAverage = dollarTotal.SlidingWindow(x => x.Average(y => y), 2).ToList();
+    } 
 }

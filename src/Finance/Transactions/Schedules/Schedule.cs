@@ -111,7 +111,6 @@ public class Schedule : ISchedule
         public IEnumerable<ITransaction> Build()
         {
             var defaultEndDate = _baseTransaction.Date.AddYears(DEFAULT_YEARS);
-            Console.WriteLine($"Building scheduler with interval: {_interval ?? DEFAULT_INTERVAL} and end date: {_endDate ?? defaultEndDate}");
             return new Schedule(_name, _baseTransaction, _interval ?? DEFAULT_INTERVAL, _endDate ?? defaultEndDate);
         }
     }
