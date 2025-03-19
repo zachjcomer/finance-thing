@@ -16,7 +16,7 @@ public static partial class DateTimeExtensions
         {
             TimeInterval.Day => date.AddDays(1),
             TimeInterval.Week => date.AddDays(7),
-            TimeInterval.Month => date.AddMonths(1),
+            TimeInterval.Month => date.AddMonthsWithClamp(1),
             TimeInterval.Year => date.AddYears(1),
             _ => throw new ArgumentException("Unsupported interval", nameof(interval))
         };
@@ -32,6 +32,20 @@ public static partial class DateTimeExtensions
             TimeInterval.Year => new DateTime(date.Year, 1, 1),
             _ => throw new ArgumentException("Unsupported interval", nameof(interval))
         };
+    }
+
+    public static DateTime AddMonthsWithClamp(this DateTime date, int months)
+    {
+        if (months == 0)
+            return date;
+
+        if (date.Day >= DateTime.DaysInMonth(date.Year, date.Month))
+        {
+            DateTime nextMonth = months > 0 ? date.AddMonths(1) : date.AddMonths(-1);
+            DateTime lastDayOfNextMonth = new DateTime(nextMonth.Year, nextMonth.Month, DateTime.DaysInMonth(nextMonth.Year, nextMonth.Month));
+            return lastDayOfNextMonth.AddMonthsWithClamp(months > 0 ? months - 1 : months + 1);
+        }
+        return date.AddMonths(months);
     }
 
     private static DateTime GetFirstDateOfWeek(this DateTime date)

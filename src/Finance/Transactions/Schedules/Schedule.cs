@@ -46,14 +46,14 @@ public class Schedule : ISchedule
 
     #region IEnumerable
     public IEnumerator<ITransaction> GetEnumerator()
-    {    
+    {
         while (CurrentTransaction != null && CurrentTransaction.Date <= _endDate)
         {
             yield return CurrentTransaction;
             CurrentTransaction = GetNext(CurrentTransaction, _interval);
         }
 
-        yield break;    
+        yield break;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -108,11 +108,11 @@ public class Schedule : ISchedule
             return this;
         }
 
-        public IEnumerable<ITransaction> Build()
+        public Schedule Build()
         {
             var defaultEndDate = _baseTransaction.Date.AddYears(DEFAULT_YEARS);
             return new Schedule(_name, _baseTransaction, _interval ?? DEFAULT_INTERVAL, _endDate ?? defaultEndDate);
         }
     }
     #endregion
-} 
+}
